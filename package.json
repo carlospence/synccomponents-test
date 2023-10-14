@@ -1,6 +1,6 @@
 {
   "name": "@carlospence/synccomponents-test",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
@@ -49,11 +49,16 @@
     "typescript": "^5.2.2"
   },
   "dependencies": {
+    "bootstrap": "4.5.0",
+    "dayjs": "^1.11.10",
     "prop-types": "^15.8.1",
-    "styled-components": "^5.3.10"
+    "styled-components": "^6.0.8"
   },
   "peerDependencies": {
     "react": "^16 || ^17 || ^18",
     "react-dom": "^16 || ^17 || ^18"
+  },
+  "resolutions": {
+    "jackspeak": "2.1.1"
   }
 }
