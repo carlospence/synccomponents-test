@@ -1,7 +1,7 @@
 import React from "react";
 import { FieldDecoration } from "../FieldDecoration/FieldDecoration";
 
-export default { title: "FieldDecoration", component: FieldDecoration };
+export default { title: "SyncComponents/FieldDecoration", component: FieldDecoration };
 
 export const Default = (): any => {
   return (

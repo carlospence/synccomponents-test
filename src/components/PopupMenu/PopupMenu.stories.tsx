@@ -1,7 +1,7 @@
 import React from "react";
 import { PopupMenu } from "./PopupMenu";
 
-export default { title: "PopupMenu", component: PopupMenu };
+export default { title: "SyncComponents/PopupMenu", component: PopupMenu };
 
 export const Default = () => (
   <div>

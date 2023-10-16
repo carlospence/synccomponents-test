@@ -5,11 +5,11 @@ import djs from "dayjs";
 
 djs.extend(advancedFormat);
 
-export default { title: "DayMonthDatePicker", component: DayMonthDatePicker };
+export default { title: "SyncComponents/DayMonthDatePicker", component: DayMonthDatePicker };
 
 export const Default = (): any => {
   const ExampleApp = (): any => {
-    const [date, setDate] = useState("2021-09-04");
+    const [date, setDate] = useState("2023-09-04");
 
     return (
       <DayMonthDatePicker

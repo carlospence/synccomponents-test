@@ -76,6 +76,7 @@ const DayMonthDatePickerPopupRoot = styled.div.attrs(props => ({
 
 export const DayMonthDatePicker = ({
   value,
+  monthDisplay = "small",
   validator,
   onChange,
   ...rest
@@ -101,7 +102,7 @@ export const DayMonthDatePicker = ({
     const current = djs();
     setDisplayYear(current.year());
     setDisplayMonth(current.month());
-    setDisplayDay(current.day())
+    setDisplayDay(current.date())
   };
 
   useEffect(() => {
@@ -119,7 +120,8 @@ export const DayMonthDatePicker = ({
   return (
     <PopupMenu>
       <DayMonthDatePickerRoot {...rest}>
-        {djs([displayYear, displayMonth, displayDay]).format("MMMM D")}
+        {monthDisplay == "long" ? djs([displayYear, displayMonth, displayDay]).format("MMMM D") :
+        djs([displayYear, displayMonth, displayDay]).format("MMM D")}
       </DayMonthDatePickerRoot>
 
       {closePopup => (

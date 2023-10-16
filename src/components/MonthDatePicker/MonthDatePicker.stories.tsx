@@ -5,7 +5,7 @@ import djs from "dayjs";
 
 djs.extend(advancedFormat);
 
-export default { title: "MonthDatePicker", component: MonthDatePicker };
+export default { title: "SyncComponents/MonthDatePicker", component: MonthDatePicker };
 
 export const Default = (): any => {
   const ExampleApp = (): any => {
