@@ -9,7 +9,7 @@ export default { title: "SyncComponents/DayMonthDatePicker", component: DayMonth
 
 export const Default = (): any => {
   const ExampleApp = (): any => {
-    const [date, setDate] = useState("2023-09-04");
+    const [date, setDate] = useState("2023-09-05");
 
     return (
       <DayMonthDatePicker
