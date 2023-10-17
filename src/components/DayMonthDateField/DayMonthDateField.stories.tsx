@@ -1,6 +1,6 @@
 import React from "react";
 import { Formik } from 'formik';
-import { DayMonthDateField } from "./DayMonthDateField";
+import DayMonthDateField from "./DayMonthDateField";
 import { action } from "@storybook/addon-actions";
 
 export default { title: "SyncComponents/DayMonthDateField", component: DayMonthDateField };

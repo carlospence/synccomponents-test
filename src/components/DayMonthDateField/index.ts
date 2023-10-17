@@ -1,3 +1,3 @@
 
 
-export {DayMonthDateField} from './DayMonthDateField'
+export {default} from './DayMonthDateField'

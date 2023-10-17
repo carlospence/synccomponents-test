@@ -31,7 +31,7 @@ const DayMonthDateFieldRoot = styled.div.attrs(props => ({
   }
 `;
 
-export const DayMonthDateField = ({
+const DayMonthDateField = ({
   name,
   label,
   helper,
@@ -79,3 +79,5 @@ export const DayMonthDateField = ({
     </DayMonthDateFieldRoot>
   );
 };
+
+export default DayMonthDateField
