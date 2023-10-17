@@ -81,14 +81,36 @@ export const DayMonthDatePicker = ({
   onChange,
   ...rest
 }: DayMonthDatePickerProps): JSX.Element => {
-  const [displayYear, setDisplayYear] = useState(dateYear(value));
-  const [displayDay, setDisplayDay] = useState(dateDay(value));
-  const [displayMonth, setDisplayMonth] = useState(dateMonth(value));
-  const [daysInMonth, setDaysInMonth] = useState(
-    djs([displayYear, displayMonth, displayDay]).daysInMonth()
-  );
-  const [monthDayOffset, setMonthDayOffset] = useState(
-    dateMonthDayOffset(displayYear, displayMonth)
+  const [displayYear, setDisplayYear] = useState(() => {
+   var year = dateYear(value)
+   if (isNaN(year)){
+    return djs().year()
+   }
+   return year;
+  });
+  const [displayDay, setDisplayDay] = useState(() => {
+    var day = dateDay(value)
+    // if (isNaN(day)){
+    //   return djs().date()
+    //  }
+     return day;
+  });
+  const [displayMonth, setDisplayMonth] = useState(() => {
+    
+    var month = dateMonth(value)
+    // if (isNaN(month)){
+    //   return  djs().month()
+    //  }
+     return month;
+  });
+  const [daysInMonth, setDaysInMonth] = useState(() => {
+    var days = djs([displayYear, displayMonth, displayDay]).daysInMonth();
+    if (isNaN(days)){
+      return 30;
+    }
+    return days
+  }
+    
   );
   const [error, setError] = useState(null);
 
@@ -107,15 +129,26 @@ export const DayMonthDatePicker = ({
 
   useEffect(() => {
     var days = djs([displayYear, displayMonth, 1]).daysInMonth();
-    setDaysInMonth(djs([displayYear, displayMonth, 1]).daysInMonth());
-    if (displayDay > days){
-      setDisplayDay(1);
-      onChange(djs([displayYear, displayMonth, 1]).format("YYYY-MM-DD"));
+    if (!isNaN(days)){
+      setDaysInMonth(days);
+      if (displayDay > days){
+        setDisplayDay(1);
+        onChange(djs([displayYear, displayMonth, 1]).format("YYYY-MM-DD"));
+      } else {
+        onChange(djs([displayYear, displayMonth, displayDay]).format("YYYY-MM-DD"));
+      }
     } else {
-      onChange(djs([displayYear, displayMonth, displayDay]).format("YYYY-MM-DD"));
+      setDaysInMonth(30);
+      if (displayDay > 28){
+        setDisplayDay(1);
+        onChange(djs().format("YYYY-MM-DD"));
+      } else {
+        onChange(djs().format("YYYY-MM-DD"));
+      }
     }
+   
   
-  }, [displayMonth, displayYear]);
+  }, [displayMonth, displayDay]);
 
   return (
     <PopupMenu>
@@ -179,6 +212,7 @@ export const DayMonthDatePicker = ({
                   onBlur={onFieldBlur}>
                   {Array(daysInMonth)
           .fill(null).map((_, dayIndex) => {
+            
             const day = dayIndex + 1;
             return (
               <option key={dayIndex} value={day}>
