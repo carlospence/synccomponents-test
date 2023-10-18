@@ -21,7 +21,7 @@ export const CustomField = ({
       case "[object String]":
         return error.toString();
       default:
-        return null;
+        return "";
     }
   };
 

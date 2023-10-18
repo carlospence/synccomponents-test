@@ -82,7 +82,7 @@ export const MonthDatePicker = ({
 }: MonthDatePickerProps): JSX.Element => {
   const [displayYear, setDisplayYear] = useState(dateYear(value));
   const [displayMonth, setDisplayMonth] = useState(dateMonth(value));
-  const [error, setError] = useState(null);
+  const [error, setError] = useState("");
 
   const monthBtnClassName = (active: boolean): string => {
     const classes = ["btn", "btn-link", "btn-sm", "text-decoration-none"];
@@ -155,8 +155,8 @@ export const MonthDatePicker = ({
                       ]).format("YYYY-MM-DD");
                       const error = validator(selectedDate);
                       if (error) return setError(error);
-                      else setError(null);
-                    } else setError(null);
+                      else setError("");
+                    } else setError("");
 
                     closePopup();
                   }}>

@@ -57,10 +57,10 @@ import React, {
   
     const [optionsOpened, setOptionsOpened] = useState(false);
     const [optionsCssProperties, setOptionsCssProperties] =
-      useState<CSSProperties>(null);
+      useState<CSSProperties>({});
     const [triggerButton, optionsMenu] = children as Array<PopupMenuChild>;
-    const triggerRef: MutableRefObject<HTMLDivElement> = useRef();
-    const optionsRef: MutableRefObject<HTMLDivElement> = useRef();
+    const triggerRef: MutableRefObject<HTMLDivElement | null> = useRef(null);
+    const optionsRef: MutableRefObject<HTMLDivElement | null> = useRef(null);
     const [firstAlignmentPass, setFirstAlignmentPass] = useState(false);
     const optionsMenuIsFunction = typeof optionsMenu === "function";
   
@@ -72,58 +72,63 @@ import React, {
     };
   
     const alignOptionsMenu = (): void => {
-      const {
-        left: tLeft,
-        right: tRight,
-        bottom: tBottom,
-        top: tTop
-      } = triggerRef.current.getBoundingClientRect();
-      const { right: oRight } = optionsRef.current.getBoundingClientRect();
-  
-      const heightAboveTrigger = tBottom;
-      const heightBelowTrigger = window.innerHeight - tTop;
-      const optionsHeight = optionsRef.current.scrollHeight;
-      const optionIsTallerThanWindow = optionsHeight > window.innerHeight;
-      const displayOptionsBelowTrigger = optionsHeight <= heightBelowTrigger;
-      const displayOptionsAboveTrigger = optionsHeight < heightAboveTrigger;
-      const optionsIsCutoffAtRight =
-        oRight + UNKNOWN_RIGHT_OFFSET_PERCENTAGE * document.body.clientWidth >
-        document.body.clientWidth;
-      const optionsTransformOrigin = [0, 0];
-      const properties: CSSProperties = {};
-  
-      if (optionIsTallerThanWindow) {
-        properties.top = 0;
-        properties.bottom = 0;
-        properties.overflow = "auto";
-  
-        if (optionsIsCutoffAtRight) {
-          optionsTransformOrigin[0] = 100;
-          properties.right = document.body.clientWidth - tRight;
+
+      if (triggerRef.current !== undefined && triggerRef.current !== null 
+        && optionsRef.current !== undefined && optionsRef.current !== null){
+        const {
+          left: tLeft,
+          right: tRight,
+          bottom: tBottom,
+          top: tTop
+        } = triggerRef.current.getBoundingClientRect();
+        const { right: oRight } = optionsRef.current.getBoundingClientRect();
+    
+        const heightAboveTrigger = tBottom;
+        const heightBelowTrigger = window.innerHeight - tTop;
+        const optionsHeight = optionsRef.current.scrollHeight;
+        const optionIsTallerThanWindow = optionsHeight > window.innerHeight;
+        const displayOptionsBelowTrigger = optionsHeight <= heightBelowTrigger;
+        const displayOptionsAboveTrigger = optionsHeight < heightAboveTrigger;
+        const optionsIsCutoffAtRight =
+          oRight + UNKNOWN_RIGHT_OFFSET_PERCENTAGE * document.body.clientWidth >
+          document.body.clientWidth;
+        const optionsTransformOrigin = [0, 0];
+        const properties: CSSProperties = {};
+    
+        if (optionIsTallerThanWindow) {
+          properties.top = 0;
+          properties.bottom = 0;
+          properties.overflow = "auto";
+    
+          if (optionsIsCutoffAtRight) {
+            optionsTransformOrigin[0] = 100;
+            properties.right = document.body.clientWidth - tRight;
+          } else {
+            optionsTransformOrigin[0] = 0;
+            properties.left = tLeft;
+          }
         } else {
-          optionsTransformOrigin[0] = 0;
-          properties.left = tLeft;
+          if (optionsIsCutoffAtRight) {
+            optionsTransformOrigin[0] = 100;
+            properties.right = document.body.clientWidth - tRight;
+          } else {
+            optionsTransformOrigin[0] = 0;
+            properties.left = tLeft;
+          }
+    
+          if (displayOptionsBelowTrigger) {
+            properties.top = tTop;
+            optionsTransformOrigin[1] = 0;
+          } else if (displayOptionsAboveTrigger) {
+            properties.bottom = window.innerHeight - tBottom;
+            optionsTransformOrigin[1] = 100;
+          }
         }
-      } else {
-        if (optionsIsCutoffAtRight) {
-          optionsTransformOrigin[0] = 100;
-          properties.right = document.body.clientWidth - tRight;
-        } else {
-          optionsTransformOrigin[0] = 0;
-          properties.left = tLeft;
-        }
-  
-        if (displayOptionsBelowTrigger) {
-          properties.top = tTop;
-          optionsTransformOrigin[1] = 0;
-        } else if (displayOptionsAboveTrigger) {
-          properties.bottom = window.innerHeight - tBottom;
-          optionsTransformOrigin[1] = 100;
-        }
+    
+        properties.transformOrigin = `${optionsTransformOrigin[0]}% ${optionsTransformOrigin[1]}%`;
+        setOptionsCssProperties(properties);
       }
-  
-      properties.transformOrigin = `${optionsTransformOrigin[0]}% ${optionsTransformOrigin[1]}%`;
-      setOptionsCssProperties(properties);
+      
     };
   
     useEffect(() => {
@@ -149,7 +154,7 @@ import React, {
         if (!firstAlignmentPass) setFirstAlignmentPass(true);
         alignOptionsMenu();
       } else {
-        setOptionsCssProperties(null);
+        setOptionsCssProperties({});
         setFirstAlignmentPass(false);
       }
     }, [optionsOpened]);
@@ -171,10 +176,11 @@ import React, {
   
         {optionsOpened && optionsMenu && (
           <PopupMenuOptions
-            ref={optionsRef}
+             ref={optionsRef}
             // OnClick is set if optionsMenu is not a function
-            onClick={optionsMenuIsFunction ? null : toggle}
-            style={optionsCssProperties}>
+            onClick={optionsMenuIsFunction ? () => {} : toggle}
+            style={optionsCssProperties}
+            >
             {optionsMenuIsFunction
               ? optionsMenu(() => setOptionsOpened(false))
               : optionsMenu}
