@@ -1,8 +1,8 @@
-import React, { useState, useRef } from "react";
+import React, { useState} from "react";
 import { Meta, StoryObj } from "@storybook/react";
 import MultiStateButton from "./MultiStateButton";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { MultiStateButtonProps, MultiStateButtonOption, MultiStateButtonElement } from "./MultiStateButton.types";
+import { MultiStateButtonProps, MultiStateButtonOption, MultiStateButtonElement, MultiStateButtonOptions } from "./MultiStateButton.types";
 
 const meta: Meta<typeof MultiStateButton> = {
   component: MultiStateButton,
@@ -107,22 +107,22 @@ export const NoLoopingButton: Story = (args) => (
   />
 );
 NoLoopingButton.args = {
-  preventClick: false,
+  readonly: false,
   disabled: false,
   loop: false
 };
 
 export const RoundButton: Story = (args) => (
   <MultiStateButton
-    round
-    loop
+  round={true}
+    loop={true}
     options={BUTTON_OPTIONS}
     data-testId="InputField-id"
     {...args}
   />
 );
 RoundButton.args = {
-  preventClick: false,
+  readonly: false,
   disabled: false,
   round: true,
   loop: true
@@ -137,7 +137,7 @@ export const LoopingButton: Story = (args) => (
   />
 );
 LoopingButton.args = {
-  preventClick: false,
+  readonly: false,
   disabled: false,
   loop: true
 };
@@ -157,18 +157,19 @@ LoopingButton.args = {
 export const ExternalChangeState = (args): any => {
   const ExampleApp = (): any => {
     const [currentOption, setCurrentOption] = useState<MultiStateButtonOption>(null);
-    const [currentState, setCurrentState] = useState<string>(null);
+    const [currentState, setCurrentState] = useState<string>(() => {
+      var keys = Object.keys(BUTTON_OPTIONS);
+      return keys[0];
+    });
    // const btn = React.useRef<MultiStateButtonElement | null>(null);
     let btn: MultiStateButtonElement | null;
    
     const handleChangeState = (args) => {
       if (btn.toggle) {
-        console.log("Change state working")
+        // console.log("Change state working")
         var option = btn.toggle();
         setCurrentOption(option)
-      } else {
-        console.log("Change state not working")
-      }
+      } 
     
     }
 
@@ -178,7 +179,7 @@ export const ExternalChangeState = (args): any => {
         </button>
         <MultiStateButton
           ref={n => {btn = n} }
-          preventClick={true}
+          readonly={true}
           onChange={(state, option) => {
             console.log(state, option, "StateOption")
             setCurrentOption(option)
@@ -186,13 +187,14 @@ export const ExternalChangeState = (args): any => {
           }}
           //ref={theRef}
           className="mx-3 mb-3"
-          round
+          round={true}
           loop
           options={BUTTON_OPTIONS}
           data-testId="InputField-id"
           {...args}
         />
         <label>Current Option: {currentOption?.value}</label>
+        {currentOption?.iconOrText}
         <br/>
         <label>Current State: {currentState}</label>
       </>
@@ -203,8 +205,194 @@ export const ExternalChangeState = (args): any => {
 };
 
 ExternalChangeState.args = {
-  // preventClick: true,
+  // readonly: true,
   disabled: false,
+};
+
+
+
+export const ExternalControlledChangeState = (args): any => {
+  const ExampleApp = (): any => {
+    const [currentOption, setCurrentOption] = useState<MultiStateButtonOption>(() => {
+      //var theOption = BUTTON_OPTIONS
+      var keys = Object.keys(BUTTON_OPTIONS);
+      return BUTTON_OPTIONS[keys[1] as keyof MultiStateButtonOptions]
+      //return keys[0]
+    }
+    
+    );
+    const [currentState, setCurrentState] = useState<string>(() => {
+      var keys = Object.keys(BUTTON_OPTIONS);
+      return keys[0];
+    });
+   // const btn = React.useRef<MultiStateButtonElement | null>(null);
+    let btn: MultiStateButtonElement | null;
+
+   
+    const handleChangeState = (args) => {
+      if (btn.toggle) {
+        // console.log("Change state working")
+        var option = btn.toggle();
+        setCurrentOption(option)
+      } 
+    
+    }
+
+    const handleChange = (state, option) => {
+      console.log(state, option, "StateOption Controlled")
+      setCurrentOption(option)
+      setCurrentState(state);
+    }
+
+    return (
+      <>
+        <button onClick={handleChangeState} className="mb-4 btn btn-primary d-flex ">Toggle 
+        </button>
+        <MultiStateButton
+          ref={n => {btn = n} }
+          // readonly={true}
+          onChange={(state, option) => handleChange(state, option)}
+          selectedOption={currentOption}
+          //ref={theRef}
+          className="mx-3 mb-3"
+          round={true}
+          loop={true}
+          options={BUTTON_OPTIONS}
+          data-testId="InputField-id"
+          {...args}
+        />
+        <label>Selected Option: {currentOption?.value}</label>
+        {currentOption?.iconOrText}
+        <br/>
+        <label>Current State: {currentState}</label>
+      </>
+    );
+  };
+
+  return <ExampleApp />;
+};
+
+ExternalControlledChangeState.args = {
+   readonly: true,
+  disabled: false,
+};
+
+
+
+export const ExternalControlledInvisibleButon = (args): any => {
+  const ExampleApp = (): any => {
+    const [currentOption, setCurrentOption] = useState<MultiStateButtonOption>(() => {
+      //var theOption = BUTTON_OPTIONS
+      var keys = Object.keys(BUTTON_OPTIONS);
+      return BUTTON_OPTIONS[keys[1] as keyof MultiStateButtonOptions]
+      //return keys[0]
+    }
+    
+    );
+    const [currentState, setCurrentState] = useState<string>(() => {
+      var keys = Object.keys(BUTTON_OPTIONS);
+      return keys[0];
+    });
+   // const btn = React.useRef<MultiStateButtonElement | null>(null);
+    let btn: MultiStateButtonElement | null;
+
+   
+    const handleChangeState = (args) => {
+      if (btn.toggle) {
+        var option = btn.toggle();
+        setCurrentOption(option)
+      } 
+    
+    }
+
+    return (
+      <>
+        <button onClick={handleChangeState} className="mb-4 btn btn-primary d-flex ">Toggle 
+        </button>
+        <MultiStateButton
+          ref={n => {btn = n} }
+          visible={false}
+          selectedOption={currentOption}
+          loop={true}
+          round={+true}
+          options={BUTTON_OPTIONS}
+          data-testId="InputField-id"
+          {...args}
+        />
+        <label>Selected Option: {currentOption?.value}</label>
+        {currentOption?.iconOrText}
+        <br/>
+        <label>Current State: {currentState}</label>
+      </>
+    );
+  };
+
+  return <ExampleApp />;
+};
+
+ExternalControlledInvisibleButon.args = {
+   readonly: true,
+  disabled: false,
+};
+
+export const ControlledChangeState = (args): any => {
+  const ExampleApp = (): any => {
+    const [currentOption, setCurrentOption] = useState<MultiStateButtonOption>(() => {
+      //var theOption = BUTTON_OPTIONS
+      var keys = Object.keys(BUTTON_OPTIONS);
+      return BUTTON_OPTIONS[keys[0] as keyof MultiStateButtonOptions]
+      //return keys[0]
+    }
+    
+    );
+    const [currentState, setCurrentState] = useState<string>(() => {
+      var keys = Object.keys(BUTTON_OPTIONS);
+      return keys[0];
+    });
+
+   
+    // const handleChangeState = (args) => {
+    //   if (btn.toggle) {
+    //     // console.log("Change state working")
+    //     var option = btn.toggle();
+    //     setCurrentOption(option)
+    //   } 
+    
+    // }
+
+    const handleChange = (state, option) => {
+      // console.log(state, option, "StateOption Controlled")
+      setCurrentOption(option)
+      setCurrentState(state);
+    }
+
+    return (
+      <>
+        <MultiStateButton
+          onChange={(state, option) => handleChange(state, option)}
+          selectedOption={currentOption}
+          className="mx-3 mb-3"
+          round={true}
+          loop={true}
+          options={BUTTON_OPTIONS}
+          data-testId="InputField-id"
+          {...args}
+        />
+        <label>Selected Option: {currentOption?.value}</label>
+        {currentOption?.iconOrText}
+        <br/>
+        <label>Current State: {currentState}</label>
+      </>
+    );
+  };
+
+  return <ExampleApp />;
+};
+
+ControlledChangeState.args = {
+   readonly: false,
+  disabled: false,
+  round: true
 };
 
 // export const Disabled: Story = (args) => (

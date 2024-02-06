@@ -7,4 +7,5 @@ export {FieldDecoration} from "./FieldDecoration"
 export {MonthDateField} from "./MonthDateField"
 export {MonthDatePicker} from "./MonthDatePicker"
 export {PopupMenu} from "./PopupMenu"
-export { default as MulltiStateButton } from "./MultiStateButton";
+export { default as MultiStateButton } from "./MultiStateButton";
+//export { default as MultiStateButtonNext } from "./MultiStateButton";
