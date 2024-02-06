@@ -12,7 +12,6 @@ export interface MultiStateButtonProps {
   readonly?: boolean;
   className?: string;
   visible?: boolean;
- 
   //onClick?: MouseEventHandler<HTMLButtonElement>;
 }
 
@@ -32,7 +31,6 @@ export type MultiStateButtonOptions = {
 export type MultiStateButtonElement =  {
   toggle: () => MultiStateButtonOption | null ;
 };
-
 
 export const isMultiStateButtonOption = (obj: MultiStateButtonOption): obj is MultiStateButtonOption => {
   if (obj.iconOrText && obj.value)

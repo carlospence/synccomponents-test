@@ -1,8 +1,8 @@
-import React, {useState, useEffect, forwardRef, useImperativeHandle} from "react";
+import React, {useState, useEffect} from "react";
 import styled, { css } from "styled-components";
-import { MultiStateButtonProps, MultiStateButtonOption, MultiStateButtonOptions, MultiStateButtonElement,
- isMultiStateButtonOption} from "./MultiStateButton.types";
-import {getOjectValue, isEmpty} from '../../utils/objectUtils'
+import { MultiStateButtonProps, MultiStateButtonOption, MultiStateButtonOptions, 
+  MultiStateButtonElement, isMultiStateButtonOption } from "./MultiStateButton.types";
+import {isEmpty} from '../../utils/objectUtils'
 import {isNonEmptyString} from '../../utils/stringUtils'
 
 // const StyledMultiStateButton = styled.button<MultiStateButtonProps>`
@@ -33,7 +33,7 @@ const StyledMultiStateButton = styled.button<MultiStateButtonProps>`
   border-radius: 3px;
   display: inline-block;
   
-  ${({ round, size}) => {
+  ${({ round, size }) => {
     if (round){
       switch (size) {
         case "small":
@@ -96,7 +96,7 @@ const StyledMultiStateButton = styled.button<MultiStateButtonProps>`
 `;
 
 
-const MultiStateButtonNext = React.forwardRef<MultiStateButtonElement, MultiStateButtonProps>(({
+const MultiStateButton = React.forwardRef<MultiStateButtonElement, MultiStateButtonProps>(({
     size,
     disabled,
     options = {},
@@ -108,7 +108,7 @@ const MultiStateButtonNext = React.forwardRef<MultiStateButtonElement, MultiStat
     ...props
    }: MultiStateButtonProps, ref) => {
 
-      const [currentState, setCurrentState] = useState(() => {
+    const [currentState, setCurrentState] = useState(() => {
     if (!isNonEmptyString(defaultOptionKey)){
       var keys = Object.keys(options);
       return keys[0]
@@ -117,7 +117,6 @@ const MultiStateButtonNext = React.forwardRef<MultiStateButtonElement, MultiStat
   })
 
   const [currentOption, setCurrentOption] = useState(() => {
-    
     if (!isEmpty(selectedOption)){
       if (isMultiStateButtonOption(selectedOption)){
         return selectedOption;
@@ -128,7 +127,6 @@ const MultiStateButtonNext = React.forwardRef<MultiStateButtonElement, MultiStat
     if (keys.length > 0){
       return options[currentState as keyof MultiStateButtonOptions]
     }
-  
     return null
   })
 
@@ -143,57 +141,59 @@ const MultiStateButtonNext = React.forwardRef<MultiStateButtonElement, MultiStat
 
   const changeState = () => {
   
-  var keys = Object.keys(options);
-  if (keys.length > 0){
-    let currentIndex = keys.indexOf(currentState);
-    if (!isEmpty(selectedOption)){
-      // console.log("Got here 0")
-      if (isMultiStateButtonOption(selectedOption)){
-        // console.log("Got here 1")
-        if (selectedOption?.value !== undefined){
-          currentIndex = keys.indexOf(selectedOption?.value);
-          // console.log("Got here 2")
+    var keys = Object.keys(options);
+    if (keys.length > 0){
+      let currentIndex = keys.indexOf(currentState);
+      if (!isEmpty(selectedOption)){
+        // console.log("Got here 0")
+        if (isMultiStateButtonOption(selectedOption)){
+          // console.log("Got here 1")
+          if (selectedOption?.value !== undefined){
+            currentIndex = keys.indexOf(selectedOption?.value);
+            // console.log("Got here 2")
+          }
+          
         }
-        
       }
-    }
-    // console.log(currentIndex, "Current Index")
-    let nextIndex = currentIndex
-    if( currentIndex < keys.length - 1){
-      nextIndex = currentIndex + 1
-    } else {
-      if(loop) {
-        nextIndex = 0
+      // console.log(currentIndex, "Current Index")
+      let nextIndex = currentIndex
+      if( currentIndex < keys.length - 1){
+        nextIndex = currentIndex + 1
+      } else {
+        if(loop) {
+          nextIndex = 0
+        }
       }
+      // console.log(nextIndex, "Next Index")
+      var nextState = keys[nextIndex]
+      let nextOption = options[nextState as keyof MultiStateButtonOptions];
+      if (onChange) {
+        // console.log("Throwing Onchange Event")
+        onChange(nextState, nextOption)
+      };
+  
+      if (isEmpty(selectedOption)){
+        setCurrentOption(nextOption)
+        setCurrentState(nextState);
+      }
+     
+      // console.log(nextOption, "Next Option", nextState, "Next State")
+      return nextOption;
+      //this.setState({currentState: keys[nextIndex]})
+  
     }
-    // console.log(nextIndex, "Next Index")
-    var nextState = keys[nextIndex]
-    let nextOption = options[nextState as keyof MultiStateButtonOptions];
-    if (onChange) {
-      // console.log("Throwing Onchange Event")
-      onChange(nextState, nextOption)
-    };
-
-    if (isEmpty(selectedOption)){
-      setCurrentOption(nextOption)
-      setCurrentState(nextState);
-    }
-   
-    // console.log(nextOption, "Next Option", nextState, "Next State")
-    return nextOption;
-    //this.setState({currentState: keys[nextIndex]})
-
-  }
 }
 
   React.useImperativeHandle(ref, () => ({
     // start() has type inferrence here
     toggle(): MultiStateButtonOption | null {
+      // changeState();
       var result =  changeState();
       if (result != undefined){
         return result;
       }
       return currentOption;
+      // return currentOption;
     },
   }));
 
@@ -211,16 +211,13 @@ const MultiStateButtonNext = React.forwardRef<MultiStateButtonElement, MultiStat
       {...props}
       className={`${props.className} ${!isEmpty(selectedOption) && isMultiStateButtonOption(selectedOption) ? selectedOption.class: currentOption?.class}`} 
       >
-      {!isEmpty(selectedOption) && isMultiStateButtonOption(selectedOption) ? selectedOption.iconOrText 
+     {!isEmpty(selectedOption) && isMultiStateButtonOption(selectedOption) ? selectedOption.iconOrText 
       : 
       options[currentState as keyof MultiStateButtonOptions].iconOrText}  
-      {/* {selectedOption.iconOrText } */}
-      {/* {options[currentState as keyof MultiStateButtonOptions].iconOrText} */}
-     {/* Example */}
     </StyledMultiStateButton>
   );;
 });
 
 
 
-export default MultiStateButtonNext;
+export default MultiStateButton;
